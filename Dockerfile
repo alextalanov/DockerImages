@@ -1,26 +1,26 @@
 # Oracle Java 8 Dockerfile
 
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  rm -rf /var/lib/apt/lists/*
+ARG HOME=/root
+ARG DEBIAN_FRONTEND=noninteractive
+ARG JDK_ARCHIVE_NAME="jdk-11.0.5_linux-x64_bin.tar.gz"
 
-RUN \
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-  add-apt-repository -y ppa:webupd8team/java && \
-  apt-get update && \
-  apt-get install -y oracle-java8-installer && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk8-installer
+WORKDIR $HOME
 
-WORKDIR /data
+RUN apt-get update
+RUN apt-get install -y wget
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+# Download and unpuck
+RUN wget --no-check-certificate "https://www.dropbox.com/s/r5n0icxrils516b/jdk-11.0.5_linux-x64_bin.tar.gz?dl=0" -O $JDK_ARCHIVE_NAME
+RUN tar -xvzf $JDK_ARCHIVE_NAME
+RUN rm -f $JDK_ARCHIVE_NAME
 
-CMD ["bash"]
+#Add to PATH
+ENV JAVA_HOME=$HOME/jdk-11.0.5
+ENV PATH=$PATH:$JAVA_HOME/bin
+
+RUN echo "Java has been installed:"
+RUN java -version
+
+CMD ["/bin/bash"]
