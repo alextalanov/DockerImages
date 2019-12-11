@@ -2,7 +2,7 @@
 
 FROM ubuntu:16.04
 
-ARG HOME=/root
+ARG HOME=/usr/local/lib
 ARG DEBIAN_FRONTEND=noninteractive
 ARG JDK_ARCHIVE_NAME="jdk-11.0.5_linux-x64_bin.tar.gz"
 
